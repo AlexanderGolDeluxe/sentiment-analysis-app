@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  hf-sentiment-analysis:
+    build: ./
+    container_name: hf-sentiment-analysis
+    expose:
+      - 8000
+    env_file: .env
+    volumes:
+      - db_data:/usr/src/sentiment_analysis_app/app/db
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-hf-sentiment-analysis
+    restart: unless-stopped
+    depends_on:
+      - hf-sentiment-analysis
+    ports:
+      - 80:80
+    volumes:
+      - ./app/configuration/nginx/default.conf:/etc/nginx/conf.d/default.conf
+
+volumes:
+  db_data:
